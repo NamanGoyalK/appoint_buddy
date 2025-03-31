@@ -23,6 +23,31 @@ class Patient {
     required this.phoneNumber,
   });
 
+  //copyWith method to update the patient details
+  Patient copyWith({
+    String? pid,
+    String? name,
+    String? newEmail,
+    String? newProblem,
+    String? newTreatment,
+    DateTime? newLastVisitDay,
+    int? newDays,
+    bool? newIsRecurring,
+    int? newPhoneNumber,
+  }) {
+    return Patient(
+      pid: pid ?? this.pid,
+      name: name ?? this.name,
+      email: newEmail ?? email,
+      problem: newProblem ?? problem,
+      treatment: newTreatment ?? treatment,
+      lastVisitDay: newLastVisitDay ?? lastVisitDay,
+      days: newDays ?? days,
+      isRecurring: newIsRecurring ?? isRecurring,
+      phoneNumber: newPhoneNumber ?? phoneNumber,
+    );
+  }
+
   //convert AppUser to json
   Map<String, dynamic> toJson() {
     return {

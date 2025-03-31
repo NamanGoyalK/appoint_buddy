@@ -184,15 +184,7 @@ class _HomePageState extends State<HomePage>
                               final patient = allPatients[index];
                               return PatientCard(
                                 index: index + 1,
-                                pid: patient.pid,
-                                name: patient.name,
-                                email: patient.email,
-                                problem: patient.problem,
-                                treatment: patient.treatment,
-                                lastVisitDay: patient.lastVisitDay,
-                                days: patient.days,
-                                isRecurring: patient.isRecurring,
-                                phoneNumber: patient.phoneNumber,
+                                patient: patient,
                               );
                             },
                           ),

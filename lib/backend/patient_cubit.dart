@@ -83,10 +83,32 @@ class PatientCubit extends Cubit<PatientState> {
   }
 
   // Update a patient
-  Future<void> updatePatient(Patient patient) async {
-    emit(PatientUpdating());
+  Future<void> updatePatient({
+    required String pid,
+    String? newName,
+    String? newEmail,
+    String? newProblem,
+    String? newTreatment,
+    DateTime? newLastVisitDay,
+    int? newDays,
+    bool? newIsRecurring,
+    int? newPhoneNumber,
+  }) async {
+    emit(PatientLoading());
     try {
-      await patientRepo.updatePatient(patient);
+      final updatedPatient = Patient(
+        pid: pid,
+        name: newName ?? '',
+        email: newEmail ?? '',
+        problem: newProblem ?? '',
+        treatment: newTreatment ?? '',
+        lastVisitDay: newLastVisitDay ?? DateTime.now(),
+        days: newDays ?? 0,
+        isRecurring: newIsRecurring ?? false,
+        phoneNumber: newPhoneNumber ?? 0,
+      );
+
+      await patientRepo.updatePatient(updatedPatient);
 
       // Refresh patient list after updating
       if (currentDate != null) {
@@ -97,6 +119,7 @@ class PatientCubit extends Cubit<PatientState> {
     } catch (e) {
       emit(PatientError('Failed to update patient: $e'));
     }
+    emit(PatientLoaded(allPatients));
   }
 
   // Delete a patient

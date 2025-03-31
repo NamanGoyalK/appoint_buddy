@@ -1,29 +1,20 @@
+import 'package:appoint_buddy/backend/patient_cubit.dart';
+import 'package:appoint_buddy/screens/edit_patient_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../models/patient_model.dart';
 
 class PatientCard extends StatelessWidget {
   final int index;
-  final String pid;
-  final String name;
-  final String email;
-  final String problem;
-  final String treatment;
-  final DateTime lastVisitDay;
-  final int days;
-  final bool isRecurring;
-  final int phoneNumber;
+  final Patient patient;
+  final bool showActions;
 
   const PatientCard({
     super.key,
     required this.index,
-    required this.pid,
-    required this.name,
-    required this.email,
-    required this.problem,
-    required this.treatment,
-    required this.lastVisitDay,
-    required this.days,
-    required this.isRecurring,
-    required this.phoneNumber,
+    required this.patient,
+    this.showActions = false,
   });
 
   @override
@@ -59,7 +50,7 @@ class PatientCard extends StatelessWidget {
               children: [
                 Text(
                   capitalizeFirstLetter(
-                    name,
+                    patient.name,
                   ),
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
@@ -73,7 +64,7 @@ class PatientCard extends StatelessWidget {
                       textAlign: TextAlign.end,
                     ),
                     Text(
-                      ' $days',
+                      ' ${patient.days}',
                       textAlign: TextAlign.end,
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
@@ -95,7 +86,7 @@ class PatientCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      ' $treatment',
+                      ' ${patient.treatment}',
                       textAlign: TextAlign.end,
                     ),
                   ],
@@ -108,7 +99,7 @@ class PatientCard extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Table(
                 border: TableBorder.all(
-                  color: Colors.grey.withAlpha(100), // Faint lines
+                  color: Colors.grey.withAlpha(100),
                   width: 1,
                 ),
                 columnWidths: const {
@@ -128,7 +119,7 @@ class PatientCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(name),
+                        child: Text(patient.name),
                       ),
                     ],
                   ),
@@ -143,7 +134,7 @@ class PatientCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(email),
+                        child: Text(patient.email),
                       ),
                     ],
                   ),
@@ -158,7 +149,7 @@ class PatientCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(problem),
+                        child: Text(patient.problem),
                       ),
                     ],
                   ),
@@ -173,7 +164,7 @@ class PatientCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(treatment),
+                        child: Text(patient.treatment),
                       ),
                     ],
                   ),
@@ -188,7 +179,7 @@ class PatientCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(lastVisitDay.toString()),
+                        child: Text(patient.lastVisitDay.toString()),
                       ),
                     ],
                   ),
@@ -203,7 +194,7 @@ class PatientCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(days.toString()),
+                        child: Text(patient.days.toString()),
                       ),
                     ],
                   ),
@@ -218,7 +209,7 @@ class PatientCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(isRecurring ? 'Yes' : 'No'),
+                        child: Text(patient.isRecurring ? 'Yes' : 'No'),
                       ),
                     ],
                   ),
@@ -233,13 +224,50 @@ class PatientCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(phoneNumber.toString()),
+                        child: Text(patient.phoneNumber.toString()),
                       ),
                     ],
                   ),
                 ],
               ),
             ),
+            if (showActions)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      showEditBottomSheet(context, patient);
+                    },
+                    child: Text(
+                      'Edit',
+                      style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.teal[500]
+                            : Colors.teal[700],
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      context.read<PatientCubit>().deletePatient(patient.pid);
+                      context.read<PatientCubit>().fetchAllPatients();
+                    },
+                    child: Text(
+                      'Delete',
+                      style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.red[500]
+                            : Colors.red[700],
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),

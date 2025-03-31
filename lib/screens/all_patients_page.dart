@@ -15,14 +15,37 @@ class AllPatientsPage extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 40),
-            Text(
-              'A L L P A T I E N T S',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                children: [
+                  IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back_ios_new)),
+                  const SizedBox(width: 10),
+                  Text(
+                    'A L L  P A T I E N T S',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      // Refresh the patients list
+                      BlocProvider.of<PatientCubit>(context)
+                          .fetchPatientsByDate(DateTime.now());
+                      // show a snackbar or toast to indicate refresh
+                      showSnackBar(context, 'Patients refreshed', Colors.green);
+                    },
+                    icon: const Icon(Icons.refresh_rounded),
+                    iconSize: 30,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -49,15 +72,8 @@ class AllPatientsPage extends StatelessWidget {
                           final patient = allPatients[index];
                           return PatientCard(
                             index: index + 1,
-                            pid: patient.pid,
-                            name: patient.name,
-                            email: patient.email,
-                            problem: patient.problem,
-                            treatment: patient.treatment,
-                            lastVisitDay: patient.lastVisitDay,
-                            days: patient.days,
-                            isRecurring: patient.isRecurring,
-                            phoneNumber: patient.phoneNumber,
+                            patient: patient,
+                            showActions: true, // Pass a flag to show buttons
                           );
                         },
                       );

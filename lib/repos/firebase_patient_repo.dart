@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import '../models/patient_model.dart';
 import 'patient_repo.dart';
 
@@ -63,11 +64,28 @@ class FirebasePatientRepo implements PatientRepo {
   }
 
   @override
-  Future<void> updatePatient(Patient patient) async {
+  Future<void> updatePatient(Patient updatedPatient) async {
     try {
-      await _getPatientCollection().doc(patient.pid).update(patient.toJson());
+      await firestore
+          .collection('users')
+          .doc(auth.currentUser?.uid)
+          .collection('patients')
+          .doc(updatedPatient.pid)
+          .update({
+        'name': updatedPatient.name,
+        'email': updatedPatient.email,
+        'days': updatedPatient.days,
+        'problem': updatedPatient.problem,
+        'treatment': updatedPatient.treatment,
+        'lastVisitDay': Timestamp.fromDate(updatedPatient.lastVisitDay),
+        'isRecurring': updatedPatient.isRecurring,
+        'phoneNumber': updatedPatient.phoneNumber
+      });
     } catch (e) {
-      throw Exception('Error updating patient: $e');
+      if (kDebugMode) {
+        print('Error updating Patient: $e');
+      }
+      throw Exception('Error updating Patient');
     }
   }
 
